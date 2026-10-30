@@ -594,26 +594,6 @@ section{position:relative;padding:clamp(90px,12vw,170px) 0}
 .final h2{font:700 clamp(40px,8.4vw,132px)/.92 var(--f-display);letter-spacing:-.06em;margin:0 0 30px}
 .final p{color:var(--muted);font-size:clamp(17px,1.5vw,20px);max-width:58ch;margin:0 0 42px}
 .contacts{display:flex;flex-wrap:wrap;gap:12px}
-.lead{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;margin:0 0 34px}
-.lead label{display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--muted)}
-.lead .full{grid-column:1/-1}
-.lead input,.lead textarea{width:100%;font:500 16px/1.4 var(--f-body);color:var(--text);background:rgba(255,255,255,.04);
-  border:1px solid var(--line-2);border-radius:var(--r-sm);padding:15px 16px;outline:none;transition:border-color .2s,background .2s}
-.lead textarea{min-height:110px;resize:vertical}
-.lead input::placeholder,.lead textarea::placeholder{color:var(--dim)}
-.lead input:focus,.lead textarea:focus{border-color:var(--acid);background:rgba(255,255,255,.06)}
-.lead .agree{grid-column:1/-1;flex-direction:row;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;cursor:pointer;margin-top:4px}
-.lead .agree input{flex:none;width:22px;height:22px;margin:0;padding:0;accent-color:var(--acid);cursor:pointer}
-.lead .agree a{color:var(--text);text-decoration:underline;text-underline-offset:3px}
-.lead .agree.err{color:#ff7a70}
-.lead .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.lead-foot{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:6px}
-.lead button[disabled]{opacity:.6;cursor:wait}
-.lead-status{font-size:15px;color:var(--muted);min-height:1.4em}
-.lead-status.ok{color:var(--acid)}
-.lead-status.err{color:#ff7a70}
-.or{margin:0 0 16px;color:var(--dim);font-size:14px}
-@media (max-width:640px){.lead{grid-template-columns:1fr}.lead-foot .btn{width:100%;justify-content:center}}
 .valid{margin-top:40px;color:var(--dim)}
 footer{padding:40px 0 50px;color:var(--dim);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
@@ -1094,28 +1074,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
       <span class="eyebrow mono">Следующий шаг</span>
       <h2 class="split" data-split>Начнём <br>с <span style="color:var(--acid)">пилота</span></h2>
       <p>Вы присылаете 2 видео, я согласую с вами оформление и в течение 3 дней покажу 8 готовых рилсов: 2 ролика по 4 версии. Если результат устраивает — запускаем регулярный выпуск: 10 роликов × 4 версии, 40 рилсов в неделю.</p>
-      <!-- Форма заявки: отправляется в Telegram через /api/lead -->
-      <form class="lead" id="leadForm" novalidate>
-        <label>Ваше имя
-          <input name="name" type="text" autocomplete="name" maxlength="80" placeholder="Как к вам обращаться" required>
-        </label>
-        <label>Телефон или Telegram
-          <input name="contact" type="text" autocomplete="tel" maxlength="120" placeholder="+7… или @username" required>
-        </label>
-        <label class="full"><span>Комментарий <span style="color:var(--dim)">(необязательно)</span></span>
-          <textarea name="message" maxlength="1500" placeholder="Ваша ниша, сколько роликов нужно, ссылка на аккаунт"></textarea>
-        </label>
-        <label class="agree" id="agreeLabel">
-          <input name="consent" type="checkbox" value="yes" required>
-          <span>Я даю <a href="consent.html" target="_blank">согласие на обработку персональных данных</a> и ознакомлен(а) с <a href="privacy.html" target="_blank">политикой обработки данных</a></span>
-        </label>
-        <label class="hp" aria-hidden="true">Не заполняйте <input name="website" type="text" tabindex="-1" autocomplete="off"></label>
-        <div class="lead-foot">
-          <button type="submit" class="btn btn-acid">Отправить заявку <span class="arr">→</span></button>
-          <span class="lead-status" id="leadStatus" role="status" aria-live="polite"></span>
-        </div>
-      </form>
-      <p class="or">Или напишите напрямую:</p>
       <!-- КОНТАКТЫ: замените ссылки на свои -->
       <div class="contacts">
         <a href="https://t.me/sokolfilm_bot" target="_blank" rel="noopener" class="btn btn-acid" data-magnetic>Написать в Telegram <span class="arr">→</span></a>
@@ -1131,7 +1089,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <span>© <span id="yr"></span> sokolov.films · Монтаж рилс под ключ · <a href="privacy.html" style="text-decoration:underline">Политика обработки данных</a></span>
+    <span>© <span id="yr"></span> sokolov.films · Монтаж рилс под ключ</span>
     <a href="#hero" class="mono">Наверх ↑</a>
   </div>
 </footer>
@@ -1387,43 +1345,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   });
   const closeLb = () => lb.classList.remove('open');
   lb.addEventListener('click', e => { if (e.target !== lbImg) closeLb(); });
-  /* ---------- форма заявки → Telegram ---------- */
-  const form = $('#leadForm');
-  if (form) form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const status = $('#leadStatus'), btn = form.querySelector('button[type=submit]');
-    const data = Object.fromEntries(new FormData(form));
-    const agree = $('#agreeLabel');
-    status.className = 'lead-status';
-    agree.classList.remove('err');
-    if (!data.name.trim() || !data.contact.trim()) {
-      status.classList.add('err');
-      status.textContent = 'Заполните имя и контакт.';
-      return;
-    }
-    if (data.consent !== 'yes') {
-      agree.classList.add('err');
-      status.classList.add('err');
-      status.textContent = 'Отметьте согласие на обработку персональных данных.';
-      return;
-    }
-    btn.disabled = true;
-    status.textContent = 'Отправляю…';
-    try {
-      const r = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok || !j.ok) throw new Error(j.error || r.status);
-      form.reset();
-      status.classList.add('ok');
-      status.textContent = 'Спасибо! Заявка отправлена, скоро свяжусь с вами.';
-    } catch (err) {
-      status.classList.add('err');
-      status.textContent = 'Не получилось отправить. Напишите, пожалуйста, в Telegram — кнопка ниже.';
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
   addEventListener('keydown', e => { if (e.key === 'Escape') { closeLb(); document.body.classList.remove('menu'); } });
 })();
 </script>
