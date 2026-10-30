@@ -602,6 +602,10 @@ section{position:relative;padding:clamp(90px,12vw,170px) 0}
 .lead textarea{min-height:110px;resize:vertical}
 .lead input::placeholder,.lead textarea::placeholder{color:var(--dim)}
 .lead input:focus,.lead textarea:focus{border-color:var(--acid);background:rgba(255,255,255,.06)}
+.lead .agree{grid-column:1/-1;flex-direction:row;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;cursor:pointer;margin-top:4px}
+.lead .agree input{flex:none;width:22px;height:22px;margin:0;padding:0;accent-color:var(--acid);cursor:pointer}
+.lead .agree a{color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.lead .agree.err{color:#ff7a70}
 .lead .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .lead-foot{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:6px}
 .lead button[disabled]{opacity:.6;cursor:wait}
@@ -1101,6 +1105,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
         <label class="full"><span>Комментарий <span style="color:var(--dim)">(необязательно)</span></span>
           <textarea name="message" maxlength="1500" placeholder="Ваша ниша, сколько роликов нужно, ссылка на аккаунт"></textarea>
         </label>
+        <label class="agree" id="agreeLabel">
+          <input name="consent" type="checkbox" value="yes" required>
+          <span>Я даю <a href="consent.html" target="_blank">согласие на обработку персональных данных</a> и ознакомлен(а) с <a href="privacy.html" target="_blank">политикой обработки данных</a></span>
+        </label>
         <label class="hp" aria-hidden="true">Не заполняйте <input name="website" type="text" tabindex="-1" autocomplete="off"></label>
         <div class="lead-foot">
           <button type="submit" class="btn btn-acid">Отправить заявку <span class="arr">→</span></button>
@@ -1123,7 +1131,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <span>© <span id="yr"></span> sokolov.films · Монтаж рилс под ключ</span>
+    <span>© <span id="yr"></span> sokolov.films · Монтаж рилс под ключ · <a href="privacy.html" style="text-decoration:underline">Политика обработки данных</a></span>
     <a href="#hero" class="mono">Наверх ↑</a>
   </div>
 </footer>
@@ -1385,10 +1393,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     e.preventDefault();
     const status = $('#leadStatus'), btn = form.querySelector('button[type=submit]');
     const data = Object.fromEntries(new FormData(form));
+    const agree = $('#agreeLabel');
     status.className = 'lead-status';
+    agree.classList.remove('err');
     if (!data.name.trim() || !data.contact.trim()) {
       status.classList.add('err');
       status.textContent = 'Заполните имя и контакт.';
+      return;
+    }
+    if (data.consent !== 'yes') {
+      agree.classList.add('err');
+      status.classList.add('err');
+      status.textContent = 'Отметьте согласие на обработку персональных данных.';
       return;
     }
     btn.disabled = true;

@@ -36,6 +36,11 @@ module.exports = async (req, res) => {
   if (!name || !contact) {
     return res.status(400).json({ ok: false, error: 'fields' });
   }
+  if (body.consent !== 'yes') {
+    return res.status(400).json({ ok: false, error: 'consent' });
+  }
+
+  const time = new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' });
 
   const text = [
     '🎬 Новая заявка с сайта',
@@ -43,6 +48,7 @@ module.exports = async (req, res) => {
     `Имя: ${name}`,
     `Контакт: ${contact}`,
     message ? `\nКомментарий:\n${message}` : '',
+    `\n✅ Согласие на обработку ПД: дано (${time} МСК)`,
   ].join('\n').trim();
 
   try {
