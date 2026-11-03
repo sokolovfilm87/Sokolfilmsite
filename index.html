@@ -217,6 +217,11 @@ section{position:relative;padding:clamp(90px,12vw,170px) 0}
 .h1 .ln{display:block}
 .h1 .grad{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:iris 8s linear infinite}
 @keyframes iris{to{background-position:200% 0}}
+/* Safari не рисует градиент родителя сквозь слова, разбитые на span-ы:
+   после разбивки градиент переносится на каждое слово. */
+.split em,.split .grad,.split .res{background:none!important;animation:none!important}
+.split em .w>span,.split .grad .w>span,.split .res .w>span{padding:0 .08em;margin:0 -.08em;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent}
+.split .grad .w>span,.split .res .w>span{background-size:200% 100%;animation:iris 8s linear infinite}
 .h1 .thin{font-weight:300;color:var(--muted)}
 .hero p.lead{margin-bottom:38px}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
