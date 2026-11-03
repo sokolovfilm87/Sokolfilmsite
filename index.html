@@ -115,8 +115,23 @@ header.top{position:fixed;inset:0 0 auto 0;z-index:80;transition:background .4s,
 header.top.scrolled{background:rgba(6,6,8,.62);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-color:var(--line)}
 .nav{display:flex;align-items:center;gap:28px;height:72px}
 .logo{display:flex;align-items:center;gap:10px;font:600 15px/1 var(--f-display);letter-spacing:-.01em}
-.logo .dot{width:10px;height:10px;border-radius:50%;background:var(--rec);box-shadow:0 0 12px var(--rec);animation:blink 1.4s steps(2) infinite}
-@keyframes blink{50%{opacity:.25}}
+.logo .dot{width:10px;height:10px;border-radius:50%;background:var(--rec);box-shadow:0 0 12px var(--rec);animation:blink 1.6s ease-in-out infinite}
+/* неоновая вывеска: горят только буквы «около съемки» */
+.logo.neon{display:grid;grid-template-columns:auto auto;column-gap:10px;row-gap:6px;align-items:center}
+.logo.neon .neon-sub{grid-column:2}
+.neon-sign{font:600 17px/1 var(--f-display);letter-spacing:-.01em;white-space:nowrap}
+.neon-sign i{font-style:normal;display:inline-block;color:#fff;
+  text-shadow:0 0 1px #fff,0 0 5px rgba(255,255,255,.9),0 0 12px rgba(255,255,255,.65),0 0 24px rgba(200,225,255,.45),0 0 42px rgba(170,200,255,.25)}
+.neon-sign .on{animation:neon-on 7s linear infinite}
+.neon-sign .on.fl{animation:neon-flick 5.3s linear infinite}
+.neon-sign .on.fl2{animation:neon-flick 8.7s linear infinite 2.1s}
+/* «мёртвые» буквы: стеклянная трубка без тока */
+.neon-sign i.dead{color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.18);text-shadow:none}
+@keyframes neon-on{0%,100%{opacity:1}48%{opacity:.96}50%{opacity:.88}52%{opacity:1}}
+@keyframes neon-flick{0%,86%,100%{opacity:1}87%{opacity:.15;text-shadow:none}88%{opacity:1}89.5%{opacity:.25;text-shadow:none}91%{opacity:1}}
+.neon-sub{font:500 9px/1 var(--f-mono);letter-spacing:.26em;text-transform:uppercase;color:var(--muted);padding-left:1px}
+@media (prefers-reduced-motion:reduce){.neon-sign .on{animation:none!important}}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.82)}}
 .nav-links{display:flex;gap:26px;margin-left:auto;font-size:14px;color:var(--muted)}
 .nav-links a{position:relative;transition:color .25s}
 .nav-links a:hover{color:var(--text)}
@@ -170,7 +185,7 @@ section{position:relative;padding:clamp(90px,12vw,170px) 0}
 /* появление */
 .rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .rv.in{opacity:1;transform:none}
-.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding:.06em .04em .22em;margin:-.06em -.04em -.22em}
 .w>span{display:inline-block;transform:translateY(110%);transition:transform 1s var(--ease)}
 .split.in .w>span{transform:none}
 
@@ -197,11 +212,16 @@ section{position:relative;padding:clamp(90px,12vw,170px) 0}
 .vf .vf-l,.vf .vf-r{position:absolute;bottom:-4px;color:var(--dim);font:500 11px/1 var(--f-mono);letter-spacing:.1em}
 .vf .vf-l{left:40px}.vf .vf-r{right:40px}
 .rec{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 12px;border:1px solid var(--line-2);border-radius:999px;background:rgba(255,255,255,.03);color:var(--text)}
-.rec i{width:8px;height:8px;border-radius:50%;background:var(--rec);box-shadow:0 0 10px var(--rec);animation:blink 1.4s steps(2) infinite}
+.rec i{width:8px;height:8px;border-radius:50%;background:var(--rec);box-shadow:0 0 10px var(--rec);animation:blink 1.6s ease-in-out infinite}
 .h1{font:700 clamp(44px,8.2vw,128px)/.92 var(--f-display);letter-spacing:-.06em;margin:28px 0 26px}
 .h1 .ln{display:block}
 .h1 .grad{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:iris 8s linear infinite}
 @keyframes iris{to{background-position:200% 0}}
+/* Safari не рисует градиент родителя сквозь слова, разбитые на span-ы:
+   после разбивки градиент переносится на каждое слово. */
+.split em,.split .grad,.split .res{background:none!important;animation:none!important}
+.split em .w>span,.split .grad .w>span,.split .res .w>span{padding:0 .08em;margin:0 -.08em;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent}
+.split .grad .w>span,.split .res .w>span{background-size:200% 100%;animation:iris 8s linear infinite}
 .h1 .thin{font-weight:300;color:var(--muted)}
 .hero p.lead{margin-bottom:38px}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
@@ -231,7 +251,11 @@ section{position:relative;padding:clamp(90px,12vw,170px) 0}
 @keyframes bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .cap{position:absolute;left:10%;right:10%;top:50%;transform:translateY(-50%);z-index:2;text-align:center;
   font:700 clamp(16px,1.9vw,26px)/1.12 var(--f-display);letter-spacing:-.03em;text-transform:uppercase}
-.p2 .cap,.p3 .cap{font-size:clamp(12px,1.3vw,18px)}
+.p2 .cap,.p3 .cap{font-size:clamp(10px,.95vw,14px);top:30%}
+.p2 .cap{left:8%;right:54%;text-align:left}
+.p3 .cap{left:54%;right:8%;text-align:right}
+.p2 .cap span,.p3 .cap span{display:block;width:fit-content;margin:.12em 0}
+.p3 .cap span{margin-left:auto}
 .cap span{display:inline-block;opacity:0;transform:translateY(14px) scale(.9);filter:blur(6px);transition:all .45s var(--ease);margin:0 .12em}
 .cap span.on{opacity:1;transform:none;filter:none}
 .cap span.k{color:var(--acid-ink);background:var(--acid);padding:0 .18em;border-radius:.18em}
@@ -606,6 +630,77 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .rv,.w>span{opacity:1!important;transform:none!important}
   .grain{display:none}
 }
+
+/* =========================================================
+   КИБЕРПАНК-ЭФФЕКТЫ (включаются классами fx-* на <html>)
+   ========================================================= */
+
+/* 2. Расшифровка цифр */
+html.fx-decrypt .dc{font-variant-numeric:tabular-nums}
+html.fx-decrypt .dc.run{text-shadow:0 0 12px rgba(212,255,58,.55)}
+
+/* 4. Неоновый импульс по рамке тарифов */
+@property --beam{syntax:"<angle>";inherits:false;initial-value:0deg}
+.beam{position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;z-index:2;display:none;
+  background:conic-gradient(from var(--beam),transparent 0 62%,rgba(61,224,255,.0) 64%,#3de0ff 76%,#d4ff3a 84%,#fff 86%,transparent 88%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  animation:beam 7s linear infinite;opacity:.45;filter:drop-shadow(0 0 6px rgba(212,255,58,.7));transition:opacity .4s}
+html.fx-beam .beam{display:block}
+.pc.feat .beam{animation-duration:3.6s;opacity:.95}
+html.fx-beam .pc:hover .beam{opacity:1;filter:drop-shadow(0 0 10px #d4ff3a) drop-shadow(0 0 22px rgba(61,224,255,.6))}
+@keyframes beam{to{--beam:360deg}}
+html.fx-beam .pc:hover .btn{animation:spark 1.1s linear infinite}
+@keyframes spark{0%,100%{box-shadow:0 0 0 rgba(212,255,58,0)}8%{box-shadow:0 0 18px rgba(212,255,58,.9),0 0 2px #fff}12%{box-shadow:0 0 4px rgba(212,255,58,.3)}16%{box-shadow:0 0 26px rgba(212,255,58,.8)}30%{box-shadow:0 0 10px rgba(212,255,58,.4)}}
+
+/* 5. HUD поверх фото и видеовизитки */
+.hud{position:absolute;inset:0;pointer-events:none;z-index:4;display:none;font:500 10px/1 var(--f-mono);letter-spacing:.14em;color:rgba(234,255,154,.85);text-transform:uppercase}
+html.fx-hud .hud{display:block}
+.vid.playing .hud{opacity:0;transition:opacity .4s}
+.hud::before{content:"";position:absolute;inset:0;opacity:.35;mix-blend-mode:overlay;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.18) 0 1px,transparent 1px 3px)}
+.hud .cn{position:absolute;width:22px;height:22px;border:1.5px solid rgba(234,255,154,.9);animation:focus 2.4s ease-in-out infinite}
+.hud .c1{left:14px;top:14px;border-right:0;border-bottom:0}
+.hud .c2{right:14px;top:14px;border-left:0;border-bottom:0}
+.hud .c3{left:14px;bottom:14px;border-right:0;border-top:0}
+.hud .c4{right:14px;bottom:14px;border-left:0;border-top:0}
+@keyframes focus{0%,100%{transform:translate(0,0);opacity:.95}50%{opacity:.45}}
+.hud .c1{animation-name:f1}.hud .c2{animation-name:f2}.hud .c3{animation-name:f3}.hud .c4{animation-name:f4}
+@keyframes f1{50%{transform:translate(5px,5px);opacity:.5}}
+@keyframes f2{50%{transform:translate(-5px,5px);opacity:.5}}
+@keyframes f3{50%{transform:translate(5px,-5px);opacity:.5}}
+@keyframes f4{50%{transform:translate(-5px,-5px);opacity:.5}}
+.hud .lbl{position:absolute;left:46px;top:20px;display:flex;align-items:center;gap:8px}
+.hud .lbl i{width:7px;height:7px;border-radius:50%;background:var(--rec);box-shadow:0 0 8px var(--rec);animation:blink 1.6s ease-in-out infinite}
+.hud .tcx{position:absolute;right:46px;top:20px;font-variant-numeric:tabular-nums}
+.hud .aim{position:absolute;left:50%;top:42%;width:34px;height:34px;margin:-17px 0 0 -17px;opacity:.5}
+.hud .aim::before,.hud .aim::after{content:"";position:absolute;background:rgba(234,255,154,.8)}
+.hud .aim::before{left:50%;top:0;bottom:0;width:1px}
+.hud .aim::after{top:50%;left:0;right:0;height:1px}
+.hud .nz{position:absolute;left:0;right:0;height:14px;top:30%;opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(61,224,255,.35),rgba(255,43,214,.3),transparent);mix-blend-mode:screen}
+.hud.noise .nz{animation:nz .45s steps(4,end) 1}
+@keyframes nz{0%{opacity:.9;top:22%;transform:translateX(-6%)}25%{top:58%;transform:translateX(5%)}50%{top:37%;height:6px;transform:translateX(-3%)}75%{top:71%;height:18px}100%{opacity:0}}
+.vid .hud .lbl,.vid .hud .tcx{display:none}
+.photo .tagme{z-index:5}
+.vid .hud .aim{display:none}
+
+/* панель выбора эффектов (временная) */
+.fxp{position:fixed;left:16px;bottom:16px;z-index:120;padding:12px 14px 10px;border-radius:14px;background:rgba(10,10,14,.86);border:1px solid var(--line-2);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font:500 11px/1.2 var(--f-mono);letter-spacing:.06em;color:var(--muted);max-width:calc(100vw - 32px)}
+.fxp b{display:block;color:var(--text);font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.14em;font-size:10px}
+.fxp label{display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer}
+.fxp input{accent-color:#d4ff3a;margin:0}
+.fxp .x{position:absolute;right:8px;top:6px;color:var(--dim);font-size:14px}
+.fxp b{cursor:pointer;padding-right:18px}
+.fxp b::after{content:" ▾";color:var(--dim)}
+.fxp.min b{margin:0}.fxp.min b::after{content:" ▸"}
+.fxp.min label{display:none}
+@media (max-width:560px){.fxp{font-size:10px;padding:10px 12px 8px}}
+
+@media (prefers-reduced-motion:reduce){
+  .beam,.hud .cn,.hud.noise .nz,html.fx-beam .pc:hover .btn{animation:none!important}
+}
 </style>
 </head>
 <body>
@@ -627,7 +722,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 <!-- ===== Шапка ===== -->
 <header class="top" id="top">
   <div class="wrap nav">
-    <a href="#hero" class="logo"><span class="dot"></span><span>sokolov<span style="color:var(--acid)">.</span>films</span></a>
+    <a href="#hero" class="logo neon" aria-label="соколов.съемки — sokolov.films">
+      <span class="dot"></span><span class="neon-sign" aria-hidden="true"><i class="off">с</i><i class="on">о</i><i class="on fl">к</i><i class="on">о</i><i class="on">л</i><i class="on">о</i><i class="off">в</i><i class="off">.</i><i class="on">с</i><i class="on">ъ</i><i class="on fl2">е</i><i class="on">м</i><i class="on">к</i><i class="on">и</i></span>
+      <span class="neon-sub" aria-hidden="true">sokolov.films</span>
+    </a>
     <nav class="nav-links">
       <a href="#offer">Оффер</a>
       <a href="#process">Процесс</a>
@@ -672,9 +770,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
     <div class="phones rv" id="phones" aria-hidden="true">
       <div class="phones-in" id="phonesIn">
-        <div class="ph9 p2"><div class="scr"><div class="bgv"></div><div class="vig"></div><div class="cap" data-caps='["Один *шаблон* на все ролики","Лента *узнаваема* с первого кадра"]'></div><div class="ui"><i></i><b></b></div></div></div>
+        <div class="ph9 p2"><div class="scr"><div class="bgv"></div><div class="vig"></div><div class="cap" data-caps='["Один *стиль*","Ваш *бренд*"]'></div><div class="ui"><i></i><b></b></div></div></div>
         <div class="ph9 p1"><div class="notch"></div><div class="scr"><div class="bgv"></div><div class="vig"></div><div class="cap" data-caps='["1 ролик — *4* шанса","10 роликов × *4* версии","40 рилсов. *Один* стиль."]'></div><div class="ui"><i></i><b></b><span>0:12</span></div></div></div>
-        <div class="ph9 p3"><div class="scr"><div class="bgv"></div><div class="vig"></div><div class="cap" data-caps='["Сроки — *в договоре*","Контент-план на *недели* вперёд"]'></div><div class="ui"><i></i><b></b></div></div></div>
+        <div class="ph9 p3"><div class="scr"><div class="bgv"></div><div class="vig"></div><div class="cap" data-caps='["Сдача *в срок*","План *вперёд*"]'></div><div class="ui"><i></i><b></b></div></div></div>
       </div>
       <div class="tag-float t1">Объём в неделю<b><span data-count="40" data-from="0">0</span> роликов</b></div>
       <div class="tag-float t2">Сдача партии<b>по графику ✓</b></div>
@@ -1100,6 +1198,29 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   const fine = matchMedia('(pointer: fine)').matches;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  /* ---------- неоновая вывеска: «с», «в» и точка сначала горят, через 5 с гаснут, потом изредка вспыхивают ---------- */
+  (() => {
+    const offs = $$('.neon-sign .off');
+    if (!offs.length) return;
+    const flash = (el, steps, end) => {            // steps: длительности переключений в мс
+      let t = 0;
+      steps.forEach((d, i) => { t += d; setTimeout(() => el.classList.toggle('dead', i % 2 === (end ? 0 : 1)), t); });
+      setTimeout(() => el.classList.add('dead'), t + 40);
+    };
+    if (reduce) { setTimeout(() => offs.forEach(el => el.classList.add('dead')), 5000); return; }
+    // гаснут с «предсмертным» дрожанием, по очереди
+    offs.forEach((el, i) => setTimeout(() => flash(el, [0, 70, 90, 60, 160, 50, 260], true), 5000 + i * 380));
+    // дальше — случайные короткие вспышки
+    const ghost = () => {
+      const el = offs[Math.floor(Math.random() * offs.length)];
+      const pattern = Math.random() < .5 ? [0, 70] : [0, 50, 70, 140];
+      pattern.forEach((d, i) => setTimeout(() => el.classList.toggle('dead', i % 2 === 1), pattern.slice(0, i + 1).reduce((a, b) => a + b, 0)));
+      setTimeout(() => el.classList.add('dead'), pattern.reduce((a, b) => a + b, 0) + 60);
+      setTimeout(ghost, 2500 + Math.random() * 6500);
+    };
+    setTimeout(ghost, 8000);
+  })();
   $('#yr').textContent = new Date().getFullYear();
 
   /* ---------- разбивка заголовков на слова ---------- */
@@ -1344,6 +1465,75 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   const closeLb = () => lb.classList.remove('open');
   lb.addEventListener('click', e => { if (e.target !== lbImg) closeLb(); });
   addEventListener('keydown', e => { if (e.key === 'Escape') { closeLb(); document.body.classList.remove('menu'); } });
+
+  /* =========================================================
+     КИБЕРПАНК-ЭФФЕКТЫ
+     Чтобы оставить только нужные — поставьте false у лишних.
+     SHOW_FX_PANEL = false уберёт панель выбора со страницы.
+     ========================================================= */
+  const FX = { decrypt: true, beam: true, hud: true };
+  const SHOW_FX_PANEL = true;
+  const FX_NAMES = { decrypt: 'Расшифровка цифр', beam: 'Неон по рамке тарифов', hud: 'HUD на фото и видео' };
+  const root = document.documentElement;
+  const fxOn = k => root.classList.contains('fx-' + k);
+  Object.keys(FX).forEach(k => root.classList.toggle('fx-' + k, FX[k]));
+
+  if (SHOW_FX_PANEL) {
+    const p = document.createElement('div'); p.className = 'fxp';
+    p.innerHTML = '<button class="x" aria-label="Скрыть">×</button><b>Эффекты</b>' +
+      Object.keys(FX).map((k, i) => `<label><input type="checkbox" data-fx="${k}" ${FX[k] ? 'checked' : ''}>${i + 1}. ${FX_NAMES[k]}</label>`).join('');
+    document.body.appendChild(p);
+    if (innerWidth < 600) p.classList.add('min');
+    $('b', p).addEventListener('click', () => p.classList.toggle('min'));
+    p.addEventListener('change', e => { const k = e.target.dataset.fx; if (k) root.classList.toggle('fx-' + k, e.target.checked); });
+    $('.x', p).addEventListener('click', () => p.remove());
+  }
+
+  /* 2. Расшифровка цифр: «10 × 4 = 40» и цены */
+  (() => {
+    const GL = '0123456789#$%&@*/<>';
+    const targets = [...$$('.eq .w>span'), ...$$('.pc .cost')].filter(el => /\d/.test(el.textContent));
+    targets.forEach(el => { el.classList.add('dc'); el.dataset.final = el.textContent; });
+    const run = el => {
+      const fin = el.dataset.final; if (!fxOn('decrypt') || reduce) { el.textContent = fin; return; }
+      const chars = [...fin], t0 = performance.now(), d = 1100; el.classList.add('run');
+      (function f(n) {
+        const p = Math.min(1, (n - t0) / d), fixed = Math.floor(p * chars.length);
+        el.textContent = chars.map((c, i) => i < fixed || !/\d/.test(c) ? c : GL[Math.floor(Math.random() * GL.length)]).join('');
+        if (p < 1) requestAnimationFrame(f); else { el.textContent = fin; el.classList.remove('run'); }
+      })(t0);
+    };
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return; io.unobserve(e.target); setTimeout(() => run(e.target), 350);
+    }), { threshold: .7 });
+    targets.forEach(el => io.observe(el));
+    $$('.pc').forEach(pc => pc.addEventListener('mouseenter', () => { const c = $('.cost', pc); if (c && !c.classList.contains('run')) run(c); }));
+  })();
+
+  /* 4. Неоновый импульс по рамке тарифов */
+  $$('.pc').forEach(pc => { const i = document.createElement('i'); i.className = 'beam'; pc.appendChild(i); });
+
+  /* 5. HUD: рамка фокуса, REC, бегущий таймкод, помехи */
+  (() => {
+    const boxes = [$('.photo'), $('#vid')].filter(Boolean);
+    const huds = boxes.map((box, n) => {
+      const h = document.createElement('div'); h.className = 'hud'; h.setAttribute('aria-hidden', 'true');
+      h.innerHTML = '<i class="cn c1"></i><i class="cn c2"></i><i class="cn c3"></i><i class="cn c4"></i><i class="aim"></i><i class="nz"></i>' +
+        `<span class="lbl"><i></i>${n ? 'REC · CAM_B' : 'REC · ID: SOKOLOV'}</span><span class="tcx">00:00:00:00</span>`;
+      box.appendChild(h); return h;
+    });
+    const t0 = performance.now();
+    setInterval(() => {
+      const s = (performance.now() - t0) / 1000, f = Math.floor((s % 1) * 25), pad = x => String(x).padStart(2, '0');
+      const tc = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(Math.floor(s) % 60)}:${pad(f)}`;
+      huds.forEach(h => $('.tcx', h).textContent = tc);
+    }, 40);
+    if (!reduce) (function noise() {
+      const h = huds[Math.floor(Math.random() * huds.length)];
+      if (h) { h.classList.remove('noise'); void h.offsetWidth; h.classList.add('noise'); }
+      setTimeout(noise, 2500 + Math.random() * 5000);
+    })();
+  })();
 })();
 </script>
 </body>
